@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CDMX · Catálogo para tu viaje</title>
+<meta name="description" content="80+ actividades, restaurantes, bares y tours curados en Ciudad de México. Marca tus favoritos para armar tu itinerario.">
+<meta property="og:title" content="CDMX · Catálogo para tu viaje">
+<meta property="og:description" content="80+ opciones curadas: museos, restaurantes, mezcalerías, lucha libre y más">
+<meta property="og:type" content="website">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;0,9..144,800;1,9..144,400&family=Manrope:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html, body { font-family: 'Manrope', system-ui, sans-serif; color: #2B2620; background: linear-gradient(180deg, #F5EDE0 0%, #F0E5D4 100%); min-height: 100vh; }
+.font-display { font-family: 'Fraunces', Georgia, serif; font-optical-sizing: auto; }
+button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+input { font-family: inherit; border: none; outline: none; }
+
+/* Header */
+.header { background: linear-gradient(135deg, #2B2620 0%, #1a1714 100%); color: #FBF6EE; position: sticky; top: 0; z-index: 20; box-shadow: 0 2px 12px rgba(0,0,0,0.15); }
+.header-inner { padding: 18px 16px 12px; max-width: 720px; margin: 0 auto; }
+.eyebrow { font-size: 10px; letter-spacing: 0.3em; font-weight: 700; color: #D4A04C; text-transform: uppercase; }
+h1 { font-size: 24px; font-weight: 600; letter-spacing: -0.01em; line-height: 1.15; color: #FBF6EE; margin-top: 4px; }
+h1 em { color: #D4A04C; font-style: italic; font-weight: 400; }
+.subtitle { font-size: 12px; color: #A9A299; margin-top: 4px; }
+.reset-btn { font-size: 10px; padding: 3px 9px; border-radius: 999px; background: rgba(245,237,224,0.1); color: #F5EDE0; display: inline-flex; align-items: center; gap: 4px; }
+.head-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+
+/* Search */
+.search-wrap { position: relative; margin-top: 12px; }
+.search-input { width: 100%; padding: 8px 12px 8px 32px; font-size: 14px; border-radius: 999px; background: rgba(245,237,224,0.95); color: #2B2620; }
+.search-icon { position: absolute; left: 11px; top: 50%; transform: translateY(-50%); color: #766C61; }
+
+/* Pills */
+.pills-row { margin-top: 12px; margin-left: -16px; margin-right: -16px; padding: 0 16px; overflow-x: auto; scrollbar-width: none; }
+.pills-row::-webkit-scrollbar { display: none; }
+.pills { display: flex; gap: 8px; padding-bottom: 4px; width: max-content; }
+.pill { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 999px; font-size: 12px; font-weight: 600; white-space: nowrap; background: rgba(245,237,224,0.1); color: #A9A299; border: 1px solid rgba(245,237,224,0.15); transition: all 0.2s; }
+.pill.active { color: #FBF6EE; border: none; }
+.pill .count { font-size: 10px; padding: 1px 6px; border-radius: 999px; background: rgba(212,160,76,0.3); color: #D4A04C; }
+.pill.active .count { background: rgba(0,0,0,0.2); color: #FBF6EE; }
+
+.sub-pills { margin-top: 8px; margin-left: -16px; margin-right: -16px; padding: 0 16px; overflow-x: auto; scrollbar-width: none; }
+.sub-pills::-webkit-scrollbar { display: none; }
+.sub-pills-inner { display: flex; gap: 6px; padding-bottom: 4px; width: max-content; }
+.sub-pill { padding: 4px 10px; border-radius: 999px; font-size: 11px; white-space: nowrap; background: transparent; color: #766C61; border: 1px solid rgba(245,237,224,0.1); }
+.sub-pill.active { background: rgba(212,160,76,0.25); color: #D4A04C; }
+
+/* Stats bar */
+.stats-bar { display: grid; grid-template-columns: 1fr 1fr; border-top: 1px solid rgba(245,237,224,0.15); }
+.stat { padding: 10px; text-align: center; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: #A9A299; }
+.stat-left { border-right: 1px solid rgba(245,237,224,0.15); }
+.stat-num { font-family: 'Fraunces', serif; font-size: 14px; font-weight: 600; color: #FBF6EE; }
+.stat-fav.active { background: rgba(194,85,61,0.2); color: #C2553D; }
+.stat-fav.active .stat-num { color: #C2553D; }
+
+/* Main */
+main { padding: 16px 12px 80px; max-width: 720px; margin: 0 auto; }
+
+/* Cards */
+.card { background: #FBF6EE; border-radius: 16px; overflow: hidden; margin-bottom: 10px; border: 1px solid rgba(43,38,32,0.08); transition: all 0.2s; }
+.card.fav { box-shadow: 0 2px 8px var(--cat-color, #C2553D)20; }
+.card-inner { padding: 14px; display: flex; gap: 12px; align-items: flex-start; }
+
+/* Heart button */
+.heart-btn { flex-shrink: 0; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: rgba(43,38,32,0.04); border: 1px solid rgba(43,38,32,0.08); transition: all 0.2s; }
+.heart-btn.fav { background: var(--cat-color, #C2553D); border: none; }
+@keyframes pop { 0% { transform: scale(1); } 50% { transform: scale(1.3); } 100% { transform: scale(1); } }
+.heart-btn.pop { animation: pop 0.3s ease-out; }
+
+.card-content { flex: 1; min-width: 0; text-align: left; }
+.card-title { font-family: 'Fraunces', serif; font-size: 16px; font-weight: 600; line-height: 1.25; color: #2B2620; display: inline-flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.star-icon { color: #D4A04C; flex-shrink: 0; }
+.meta-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-top: 4px; font-size: 11px; color: #766C61; margin-bottom: 6px; }
+.cat-tag { padding: 1px 6px; border-radius: 4px; font-weight: 700; font-size: 10px; }
+.area-tag { display: inline-flex; align-items: center; gap: 2px; }
+.price-tag { font-weight: 700; color: #1B5E63; }
+.desc { font-size: 12px; line-height: 1.55; color: #4A453F; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.desc.expanded { display: block; }
+
+.details { margin-top: 10px; display: flex; flex-direction: column; gap: 6px; }
+@keyframes slide { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
+.details { animation: slide 0.25s ease-out; }
+.price-note, .closed-note { font-size: 10px; display: inline-flex; align-items: center; gap: 4px; color: #766C61; }
+.closed-note { color: #C2553D; }
+.tip { font-size: 11px; padding: 8px; border-radius: 8px; background: rgba(212,160,76,0.12); color: #4A453F; line-height: 1.5; display: flex; gap: 6px; }
+.tip-icon { flex-shrink: 0; color: #8B6A2E; margin-top: 1px; }
+.reserva-badge { display: inline-flex; align-items: center; gap: 4px; padding: 2px 6px; border-radius: 4px; background: #C2553D; color: #FBF6EE; font-size: 10px; font-weight: 700; align-self: flex-start; }
+
+.chevron-btn { flex-shrink: 0; margin-top: 4px; color: #A9A299; padding: 4px; }
+
+/* Empty state */
+.empty { text-align: center; padding: 48px 16px; color: #766C61; font-size: 14px; }
+
+/* Footer */
+.footer-msg { background: rgba(27,94,99,0.08); color: #1B5E63; text-align: center; padding: 14px; border-radius: 12px; font-size: 11px; margin-top: 16px; }
+.footer-msg strong { font-weight: 700; }
+.persist-msg { text-align: center; font-size: 10px; color: #766C61; opacity: 0.5; padding: 8px; }
+
+/* Floating button */
+.fab { position: fixed; bottom: 16px; right: 16px; z-index: 30; padding: 12px 16px; border-radius: 999px; background: #C2553D; color: #FBF6EE; box-shadow: 0 4px 12px rgba(194,85,61,0.4); font-size: 12px; font-weight: 600; display: none; align-items: center; gap: 8px; }
+.fab.show { display: inline-flex; }
+
+/* Category colors */
+.cat-actividad { --cat-color: #C2553D; }
+.cat-restaurante { --cat-color: #1B5E63; }
+.cat-bar { --cat-color: #8B5CF6; }
+.cat-tour { --cat-color: #D4A04C; }
+
+.cat-tag.cat-actividad { background: #C2553D15; color: #C2553D; }
+.cat-tag.cat-restaurante { background: #1B5E6315; color: #1B5E63; }
+.cat-tag.cat-bar { background: #8B5CF615; color: #8B5CF6; }
+.cat-tag.cat-tour { background: #D4A04C15; color: #D4A04C; }
+
+/* Icon (svg helper) */
+.icon { display: inline-block; vertical-align: middle; }
+
+/* Print-friendly when sharing */
+@media print {
+  .header { position: static; }
+  .fab { display: none !important; }
+}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-inner">
+    <div class="head-row">
+      <span class="eyebrow">Catálogo · CDMX</span>
+      <button class="reset-btn" id="resetBtn" style="display:none">
+        <svg class="icon" width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+        Reset
+      </button>
+    </div>
+    <h1>Explora <em>opciones</em></h1>
+    <div class="subtitle">Marca tus favoritos para armar tu itinerario</div>
+
+    <div class="search-wrap">
+      <svg class="search-icon icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+      <input class="search-input" type="text" id="searchInput" placeholder="Buscar lugar o zona...">
+    </div>
+
+    <div class="pills-row">
+      <div class="pills" id="catPills"></div>
+    </div>
+    <div class="sub-pills" id="subPillsWrap" style="display:none">
+      <div class="sub-pills-inner" id="subPills"></div>
+    </div>
+  </div>
+
+  <div class="stats-bar">
+    <div class="stat stat-left">
+      <span>Mostrando</span>
+      <span class="stat-num" id="countShowing">0</span>
+    </div>
+    <button class="stat stat-fav" id="favToggle">
+      <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.29 1.51 4.04 3 5.5l7 7Z"/></svg>
+      <span>Favoritos</span>
+      <span class="stat-num" id="countFav">0</span>
+    </button>
+  </div>
+</header>
+
+<main>
+  <div id="cardsContainer"></div>
+  <div id="emptyState" class="empty" style="display:none">No hay resultados con esos filtros</div>
+  <div id="footerMsg" class="footer-msg" style="display:none">⭐ Llevas <strong id="footerCount">0</strong> favoritos. Cuando termines, dile a Claude que armen el itinerario.</div>
+  <div class="persist-msg">Tus favoritos se guardan automáticamente en este dispositivo</div>
+</main>
+
+<button class="fab" id="fabBtn">
+  <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.29 1.51 4.04 3 5.5l7 7Z"/></svg>
+  <span id="fabText">Ver mis favoritos</span>
+</button>
+
+<script>
+// ============ DATA ============
+const ITEMS = [
+  { id: 'frida', cat: 'actividad', sub: 'museo', name: 'Museo Frida Kahlo (Casa Azul)', area: 'Coyoacán', price: 19, priceNote: 'por persona', desc: 'La casa donde vivió Frida, ahora museo. Sus pinturas, vestidos, corsés ortopédicos.', tip: 'Reservar en boletosfridakahlo.org con semanas. NO Airbnb (3x más caro).', star: true, reserva: true, cerrado: 'Lunes' },
+  { id: 'antropologia', cat: 'actividad', sub: 'museo', name: 'Museo Nacional de Antropología', area: 'Chapultepec', price: 16, priceNote: 'por persona', desc: 'El museo más importante de México. La Piedra del Sol, civilizaciones prehispánicas.', tip: 'Mínimo 2-3 horas. Imposible verlo todo, escoge salas.', star: true, cerrado: 'Lunes' },
+  { id: 'castillo', cat: 'actividad', sub: 'museo', name: 'Castillo de Chapultepec', area: 'Chapultepec', price: 7, priceNote: 'por persona', desc: 'Único castillo real de América. Vista panorámica de Reforma. Historia desde Maximiliano.', tip: 'Lleguen a las 9 AM al abrir. Subida a pie ~10 min.', star: true, cerrado: 'Lunes' },
+  { id: 'templo-mayor', cat: 'actividad', sub: 'museo', name: 'Templo Mayor + Museo', area: 'Centro', price: 16, priceNote: 'por persona', desc: 'Ruinas aztecas excavadas bajo el Zócalo + museo con piezas únicas.', tip: 'Justo al lado de la Catedral, fácil combinar.', cerrado: 'Lunes' },
+  { id: 'bellas-artes', cat: 'actividad', sub: 'museo', name: 'Palacio de Bellas Artes', area: 'Centro', price: 7, priceNote: 'por persona', desc: 'Edificio art déco icónico. Murales de Diego Rivera, Orozco, Siqueiros dentro.', tip: 'Domingo gratis. El edificio por fuera es free.', cerrado: 'Lunes' },
+  { id: 'casa-estudio', cat: 'actividad', sub: 'museo', name: 'Casa Estudio Diego Rivera y Frida', area: 'San Ángel', price: 4, priceNote: 'por persona', desc: 'Casas-puente diseñadas por Juan O\'Gorman. Donde vivieron Diego y Frida.', tip: 'Combina con Bazar Sábado de San Ángel.', cerrado: 'Lunes' },
+  { id: 'soumaya', cat: 'actividad', sub: 'museo', name: 'Museo Soumaya', area: 'Polanco', price: 0, priceNote: 'GRATIS', desc: 'Arquitectura icónica de Fernando Romero. Colección de Carlos Slim: Rodin, Dalí, Van Gogh.', tip: 'Vale ir solo por la fachada de aluminio.', star: true },
+  { id: 'jumex', cat: 'actividad', sub: 'museo', name: 'Museo Jumex', area: 'Polanco', price: 4, priceNote: 'por persona', desc: 'Arte contemporáneo de clase mundial. Junto al Soumaya, fácil combinar.', tip: 'Domingo gratis. Edificio de David Chipperfield.', cerrado: 'Lunes' },
+  { id: 'luis-barragan', cat: 'actividad', sub: 'museo', name: 'Casa Luis Barragán', area: 'Tacubaya', price: 40, priceNote: 'por persona, con guía', desc: 'Patrimonio UNESCO. Casa del arquitecto más importante de México. Color, luz, espiritualidad.', tip: '⚠️ Reservar con semanas en casaluisbarragan.org. Solo visita guiada.', star: true, reserva: true },
+  { id: 'san-ildefonso', cat: 'actividad', sub: 'museo', name: 'Antiguo Colegio de San Ildefonso', area: 'Centro', price: 4, priceNote: 'por persona', desc: 'Cuna del muralismo mexicano. Murales originales de Orozco, Rivera, Siqueiros.', tip: 'Subestimado, suele estar vacío.' },
+  { id: 'palacio-nacional', cat: 'actividad', sub: 'museo', name: 'Murales Diego Rivera - Palacio Nacional', area: 'Centro', price: 0, priceNote: 'GRATIS con ID', desc: 'Murales más famosos de Diego Rivera contando la historia de México.', tip: 'Llevar pasaporte. A veces hay filas o lo cierran por eventos oficiales.' },
+  { id: 'tamayo', cat: 'actividad', sub: 'museo', name: 'Museo Tamayo', area: 'Chapultepec', price: 5, priceNote: 'por persona', desc: 'Arte contemporáneo. Edificio modernista en el bosque.', tip: 'Buen plan combinar con Antropología (al lado).' },
+  { id: 'dolores-olmedo', cat: 'actividad', sub: 'museo', name: 'Museo Dolores Olmedo', area: 'Xochimilco', price: 8, priceNote: 'por persona', desc: 'Mayor colección privada de Frida y Diego. Hacienda con jardines, pavos reales.', tip: 'Combinar con Xochimilco — están en la misma zona.' },
+  { id: 'torre-latino', cat: 'actividad', sub: 'experiencia', name: 'Torre Latinoamericana (mirador)', area: 'Centro', price: 20, priceNote: 'por persona', desc: 'Vista 360° del Centro. Edificio histórico que sobrevivió el sismo del 85.', tip: 'Ir al atardecer 7 PM. Comprar online evita filas.', star: true },
+  { id: 'trajinera', cat: 'actividad', sub: 'experiencia', name: 'Trajinera en Xochimilco', area: 'Xochimilco', price: 75, priceNote: 'por pareja, 2-3h', desc: 'Lanchas coloridas con mariachi flotante. Festivo, ruidoso, muy mexicano.', tip: 'Embarcadero Nuevo Nativitas (menos turístico). Lleva hielera con bebidas.', star: true },
+  { id: 'lucha-libre', cat: 'actividad', sub: 'experiencia', name: 'Lucha Libre - Arena México', area: 'Doctores', price: 30, priceNote: 'por persona, 1ª luneta', desc: 'Función estelar viernes. Máscaras, capa, drama, comedia. Imperdible.', tip: 'Comprar en Ticketmaster. Llegar 30 min antes. Compren máscara.', star: true, reserva: true },
+  { id: 'globo-teo', cat: 'actividad', sub: 'experiencia', name: 'Globo aerostático en Teotihuacán', area: 'Teotihuacán', price: 250, priceNote: 'por persona', desc: 'Vuelo al amanecer sobre las pirámides. Incluye desayuno champagne.', tip: 'Salida 4:30 AM, regreso 10 AM. Caro pero memorable.', star: true },
+  { id: 'bici-reforma', cat: 'actividad', sub: 'experiencia', name: 'Ciclotón en Paseo de la Reforma', area: 'Reforma', price: 5, priceNote: 'por hora, renta de bici', desc: 'Domingos cierran Reforma al tráfico. Recorres 30+ km rodando por la ciudad.', tip: 'Solo domingos hasta 2 PM. Renta bici en cualquier estación de Ecobici turista.' },
+  { id: 'mariachi-garibaldi', cat: 'actividad', sub: 'experiencia', name: 'Plaza Garibaldi (mariachis)', area: 'Centro', price: 0, priceNote: 'gratis caminar', desc: 'La plaza de los mariachis. Contrata canciones (~$200 MXN c/u) o solo escucha.', tip: 'Mejor de día o noche temprana (no muy tarde). Cuidado con carteras.' },
+  { id: 'teotihuacan', cat: 'actividad', sub: 'daytrip', name: 'Teotihuacán (día completo)', area: 'Edo. México', price: 65, priceNote: 'por persona, tour grupal', desc: 'Pirámides del Sol y la Luna. ⚠️ Actualmente NO se puede subir a ninguna.', tip: 'Salida 7 AM. Tour privado ~$150 CAD/per. Vale aunque no se pueda subir.', star: true, reserva: true },
+  { id: 'tepoztlan', cat: 'actividad', sub: 'daytrip', name: 'Tepoztlán (pueblo mágico)', area: 'Morelos, 1.5h', price: 100, priceNote: 'por persona, tour', desc: 'Pueblo bohemio en montaña. Hike a pirámide del Tepozteco, tianguis dominical, mezcal.', tip: 'Hike es 45 min subiendo. Mercado dominical es lo mejor.', star: true },
+  { id: 'puebla', cat: 'actividad', sub: 'daytrip', name: 'Puebla + Cholula', area: 'Puebla, 2h', price: 110, priceNote: 'por persona, bus ADO + tour', desc: 'Ciudad colonial UNESCO. Capilla del Rosario, mole poblano, Pirámide de Cholula (la más grande del mundo por base).', tip: 'Julio es temporada de chiles en nogada.' },
+  { id: 'valle-bravo', cat: 'actividad', sub: 'daytrip', name: 'Valle de Bravo', area: 'Edo. México, 2.5h', price: 130, priceNote: 'por persona, tour', desc: 'Pueblo lacustre, parapente, deportes acuáticos. Más rural y tranquilo.', tip: 'Mejor para 2 días que día completo.' },
+  { id: 'taxco', cat: 'actividad', sub: 'daytrip', name: 'Taxco', area: 'Guerrero, 3h', price: 120, priceNote: 'por persona, tour', desc: 'Pueblo de plata colgado de la montaña. Iglesia barroca espectacular.', tip: 'Día largo, considerar dormir una noche.' },
+  { id: 'mercado-coyoacan', cat: 'actividad', sub: 'mercado', name: 'Mercado de Coyoacán', area: 'Coyoacán', price: 0, priceNote: 'entrada libre', desc: 'Tostadas legendarias, artesanías, antojitos. Vibrante y muy local.', tip: 'Las tostadas de tinga son lo mejor.' },
+  { id: 'mercado-san-juan', cat: 'actividad', sub: 'mercado', name: 'Mercado de San Juan', area: 'Centro', price: 0, priceNote: 'entrada libre', desc: 'Gourmet/exótico. Quesos europeos, embutidos, insectos comestibles, carnes raras.', tip: 'Excelente lugar para comer y degustar antes de salir.', star: true },
+  { id: 'mercado-roma', cat: 'actividad', sub: 'mercado', name: 'Mercado Roma', area: 'Roma', price: 0, priceNote: 'entrada libre', desc: 'Mercado gourmet moderno. Varios puestos top: Pasillo de Humo, mezcalería.', tip: 'Buen plan para una comida casual con variedad.' },
+  { id: 'mercado-jamaica', cat: 'actividad', sub: 'mercado', name: 'Mercado de Jamaica (flores)', area: 'Venustiano Carranza', price: 0, priceNote: 'entrada libre', desc: 'Mercado de flores 24/7. Espectacular visualmente, fotos increíbles.', tip: 'Mejor temprano AM. Llevar efectivo si quieren un ramo.' },
+  { id: 'bazar-sabado', cat: 'actividad', sub: 'mercado', name: 'Bazar Sábado (San Ángel)', area: 'San Ángel', price: 0, priceNote: 'entrada libre', desc: 'Mercado de artesanías top calidad. Solo sábados 10 AM-7 PM.', tip: 'Combinar con Casa Estudio Diego/Frida.' },
+  { id: 'coyoacan-plaza', cat: 'actividad', sub: 'barrio', name: 'Plaza Hidalgo + Jardín Centenario', area: 'Coyoacán', price: 0, priceNote: 'gratis', desc: 'Corazón colonial de Coyoacán. Iglesia, fuente de los coyotes, vendedores, ambiente.', tip: 'Fin de semana hay shows callejeros, danzantes aztecas.' },
+  { id: 'chapultepec-bosque', cat: 'actividad', sub: 'barrio', name: 'Bosque de Chapultepec', area: 'Chapultepec', price: 0, priceNote: 'gratis', desc: 'Pulmón verde de la ciudad. 2x más grande que Central Park.', tip: 'La sección 1 tiene castillo + museos. Sección 2 es más relajada.' },
+  { id: 'parque-mexico', cat: 'actividad', sub: 'barrio', name: 'Parque México + Parque España', area: 'Condesa', price: 0, priceNote: 'gratis', desc: 'Parques art déco en La Condesa. Perfectos para caminar, gente paseando perros.', tip: 'Cafés y restaurantes alrededor. Vibra muy "hipster CDMX".' },
+  { id: 'pujol', cat: 'restaurante', sub: 'finedining', name: 'Pujol', area: 'Polanco', price: 270, priceNote: 'tasting sin maridaje', desc: 'Enrique Olvera. World\'s 50 Best, estrella Michelin. Mole Madre.', tip: '⚠️ Reservar 1-3 meses antes. Cierra domingos.', star: true, reserva: true },
+  { id: 'quintonil', cat: 'restaurante', sub: 'finedining', name: 'Quintonil', area: 'Polanco', price: 260, priceNote: 'tasting sin maridaje', desc: 'Jorge Vallejo. Top 10 World\'s 50 Best. Cocina mexicana de autor.', tip: 'Reservar 1-2 meses antes. Alternativa a Pujol.', star: true, reserva: true },
+  { id: 'sud-777', cat: 'restaurante', sub: 'finedining', name: 'Sud 777', area: 'Pedregal', price: 120, priceNote: 'tasting o à la carte', desc: 'Edgar Núñez. Top 50 LatAm. Cocina mexicana contemporánea con huerto propio.', tip: 'Más accesible que Pujol/Quintonil pero mismo nivel culinario.', reserva: true },
+  { id: 'rosetta', cat: 'restaurante', sub: 'finedining', name: 'Rosetta', area: 'Roma', price: 90, priceNote: 'plato fuerte $40-50', desc: 'Elena Reygadas (mejor chef mujer del mundo 2023). Casona romántica.', tip: 'Cerrado domingos. Pan de guayaba imperdible.', star: true, reserva: true },
+  { id: 'maximo', cat: 'restaurante', sub: 'contemporaneo', name: 'Máximo Bistrot', area: 'Roma', price: 90, priceNote: 'plato fuerte $40-55', desc: 'Bistro orgánico-contemporáneo. Romántico, ingredientes locales. Top sustituto de Pujol.', tip: 'Cerrado lunes. Reservar 1-2 semanas.', star: true, reserva: true },
+  { id: 'meroma', cat: 'restaurante', sub: 'contemporaneo', name: 'Meroma', area: 'Roma', price: 85, priceNote: 'plato fuerte $35-50', desc: 'Cocina contemporánea, vibras lindas, terraza.', tip: 'Cerrado domingo y lunes.', reserva: true },
+  { id: 'em', cat: 'restaurante', sub: 'contemporaneo', name: 'Em (Eduardo García)', area: 'Roma', price: 90, priceNote: 'plato fuerte $35-55', desc: 'Bar de cocina abierta, intenso. Mismo chef de Máximo Bistrot.', tip: 'Más experiencial, te sientan frente a la cocina.', reserva: true },
+  { id: 'comedor-jacinta', cat: 'restaurante', sub: 'contemporaneo', name: 'Comedor Jacinta', area: 'Polanco', price: 80, priceNote: 'plato fuerte $35-50', desc: 'Cocina mexicana de mercado. Lugar bonito, ambiente sereno.', tip: 'Buena opción si están en Polanco.', reserva: true },
+  { id: 'azul-historico', cat: 'restaurante', sub: 'contemporaneo', name: 'Azul Histórico', area: 'Centro', price: 50, priceNote: 'plato fuerte $25-35', desc: 'Ricardo Muñoz Zurita. Cocina mexicana fina en patio colonial.', tip: 'El patio es espectacular. Ideal post-Centro Histórico.', star: true },
+  { id: 'azul-condesa', cat: 'restaurante', sub: 'contemporaneo', name: 'Azul Condesa', area: 'Condesa', price: 65, priceNote: 'plato fuerte $30-45', desc: 'Mismo chef que Azul Histórico. Maestro del mole. Más romántico de noche.', tip: 'El menú de moles es legendario.', star: true },
+  { id: 'los-danzantes-coy', cat: 'restaurante', sub: 'contemporaneo', name: 'Los Danzantes Coyoacán', area: 'Coyoacán', price: 85, priceNote: 'plato fuerte $35-50', desc: 'Patio precioso en plaza de Coyoacán. Cocina mexicana contemporánea, mezcalería.', tip: '⭐ Top pick para sustituir Contramar el sábado.', star: true, reserva: true },
+  { id: 'corazon-maguey', cat: 'restaurante', sub: 'contemporaneo', name: 'Corazón de Maguey', area: 'Coyoacán', price: 55, priceNote: 'plato fuerte $25-40', desc: 'Cocina oaxaqueña en la plaza de Coyoacán. Moles, tlayudas, mezcal.', tip: 'Más casual que Los Danzantes pero igual de bueno.' },
+  { id: 'pasillo-humo', cat: 'restaurante', sub: 'contemporaneo', name: 'Pasillo de Humo', area: 'Roma (Mercado Roma)', price: 50, priceNote: 'plato fuerte $25-40', desc: 'Cocina oaxaqueña excelente. Mole espectacular. No requiere reservación.', tip: 'Casual pero altísima calidad.', star: true },
+  { id: 'paramo', cat: 'restaurante', sub: 'contemporaneo', name: 'Páramo', area: 'Roma', price: 50, priceNote: 'plato fuerte $20-35', desc: 'Cocina mexicana moderna en patio interior. Ambiente joven, cocteles top.', tip: 'Excelente para cena casual-cool.' },
+  { id: 'hugo', cat: 'restaurante', sub: 'contemporaneo', name: 'Hugo', area: 'Roma', price: 60, priceNote: 'plato fuerte $25-40', desc: 'Cocina mexicana moderna, vibra de bistro acogedor.', tip: 'Bueno para una cena íntima.' },
+  { id: 'lardo', cat: 'restaurante', sub: 'contemporaneo', name: 'Lardo', area: 'Condesa', price: 65, priceNote: 'plato fuerte $30-45', desc: 'Elena Reygadas también. Mediterráneo casual-elegante. Hermana casual de Rosetta.', tip: 'Brunch y comida son lo mejor. Pasta, pizza, ensaladas.', star: true },
+  { id: 'tetetlan', cat: 'restaurante', sub: 'contemporaneo', name: 'Tetetlán', area: 'San Ángel', price: 65, priceNote: 'plato fuerte $30-45', desc: 'En casa-estudio de Luis Barragán. Espacio arquitectónico precioso, menú variado.', tip: 'Vale la pena por la arquitectura sola.', star: true },
+  { id: 'molino-pujol', cat: 'restaurante', sub: 'contemporaneo', name: 'Molino "El Pujol"', area: 'Polanco', price: 40, priceNote: 'plato fuerte $15-30', desc: 'La cara casual de Enrique Olvera. Tlacoyos, tortillas heirloom, mole.', tip: 'Universo Pujol a 1/10 del precio. Imperdible.', star: true },
+  { id: 'nicos', cat: 'restaurante', sub: 'contemporaneo', name: 'Nicos', area: 'Clavería', price: 60, priceNote: 'plato fuerte $25-40', desc: 'Top 50 LatAm. Cocina mexicana tradicional refinada. Fuera de zonas turísticas.', tip: 'Requiere Uber pero vale la pena. Almuerzo familiar tradicional.' },
+  { id: 'cardenal', cat: 'restaurante', sub: 'tradicional', name: 'El Cardenal', area: 'Centro', price: 40, priceNote: 'plato fuerte $20-35', desc: 'Cocina mexicana clásica. Famoso por desayunos: chocolate caliente con concha.', tip: 'Múltiples sucursales. La del Centro es la original.', star: true },
+  { id: 'cafe-tacuba', cat: 'restaurante', sub: 'tradicional', name: 'Café de Tacuba', area: 'Centro', price: 35, priceNote: 'plato fuerte $20-30', desc: 'Clásico desde 1912. Edificio histórico, mole tradicional, ambiente colonial.', tip: 'Más turístico pero la experiencia visual vale.' },
+  { id: 'el-bajio', cat: 'restaurante', sub: 'tradicional', name: 'El Bajío', area: 'Múltiples sucursales', price: 40, priceNote: 'plato fuerte $20-30', desc: 'Cocina mexicana excelente. Carnitas, mole, chiles en nogada (julio).', tip: 'Sucursal de Polanco es más bonita.' },
+  { id: 'fonda-margarita', cat: 'restaurante', sub: 'tradicional', name: 'Fonda Margarita', area: 'Del Valle', price: 15, priceNote: 'plato fuerte $8-12', desc: 'Desayunos legendarios desde 1960. Frijoles con huevo, chilaquiles, atmosfera única.', tip: 'Solo desayuno 5:30 AM - 11:30 AM. Hay fila. Solo efectivo.', star: true },
+  { id: 'limosneros', cat: 'restaurante', sub: 'tradicional', name: 'Limosneros', area: 'Centro', price: 60, priceNote: 'plato fuerte $30-40', desc: 'Cocina mexicana de autor en edificio del siglo XVIII. Ingredientes endémicos.', tip: 'Lugar elegante. Buena opción cena en Centro.' },
+  { id: 'el-hidalguense', cat: 'restaurante', sub: 'tradicional', name: 'El Hidalguense', area: 'Roma', price: 30, priceNote: 'plato fuerte $15-25', desc: 'Barbacoa de hoyo auténtica, hidalguense. Tacos, mixiotes, consomé.', tip: '⚠️ Solo viernes, sábado y domingo. Hasta que se acaba.', star: true },
+  { id: 'lalo', cat: 'restaurante', sub: 'brunch', name: 'Lalo!', area: 'Roma', price: 25, priceNote: 'plato fuerte $15-25', desc: 'El brunch más cool de Roma. Huevos divinos, sopes, jugos prensados.', tip: 'Hay fila los fines de semana. Llegar antes de las 10 AM.', star: true },
+  { id: 'niddo', cat: 'restaurante', sub: 'brunch', name: 'Niddo', area: 'Juárez', price: 40, priceNote: 'plato fuerte $20-30', desc: 'Casa colonial bellísima, brunch refinado con toque francés.', tip: 'Más caro pero el espacio es magia.' },
+  { id: 'cafe-nin', cat: 'restaurante', sub: 'brunch', name: 'Café Nin', area: 'Roma', price: 25, priceNote: 'plato fuerte $15-25', desc: 'Hermana casual de Rosetta. Brunch y comida ligera.', tip: 'Pan de la panadería Rosetta sirve aquí también.' },
+  { id: 'panaderia-rosetta', cat: 'restaurante', sub: 'brunch', name: 'Panadería Rosetta', area: 'Roma', price: 15, priceNote: 'individual $8-15', desc: 'Pan de guayaba (legendario), conchas, sándwiches.', tip: 'Para llevar o comer al paso. No requiere reservación.', star: true },
+  { id: 'eno', cat: 'restaurante', sub: 'brunch', name: 'Eno', area: 'Múltiples sucursales', price: 25, priceNote: 'plato fuerte $15-25', desc: 'Concepto casual de Enrique Olvera. Café, sándwiches, brunch.', tip: 'Bueno si quieren probar comida de Olvera sin gastar Pujol.' },
+  { id: 'califa', cat: 'restaurante', sub: 'tacos', name: 'El Califa de León', area: 'San Rafael', price: 5, priceNote: 'tacos $1.50-2 c/u', desc: '⭐⭐ Primera taquería en el mundo con estrella Michelin. Solo taco al pastor + gaonera.', tip: 'Vale la pena la peregrinación. Fila 15-30 min.', star: true },
+  { id: 'turix', cat: 'restaurante', sub: 'tacos', name: 'El Turix', area: 'Polanco', price: 10, priceNote: 'tacos $3-5 c/u', desc: 'Cochinita pibil yucateca legendaria. Local minúsculo, gente parada comiendo.', tip: 'Cerca de Polanco shopping, fácil combinar.', star: true },
+  { id: 'vilsito', cat: 'restaurante', sub: 'tacos', name: 'El Vilsito', area: 'Narvarte', price: 10, priceNote: 'tacos $1.50-2 c/u', desc: 'Taller mecánico de día → taquería al pastor por la noche. Trompo gigante.', tip: 'Solo de noche 8 PM-2 AM. Después de Lucha Libre es perfecto.', star: true },
+  { id: 'huequito', cat: 'restaurante', sub: 'tacos', name: 'El Huequito', area: 'Centro', price: 5, priceNote: 'tacos $1.50-2 c/u', desc: 'Pastorero clásico desde 1959. Inventó el taco al pastor pequeño.', tip: 'Cerca de Bellas Artes. Comida rápida después del Centro.' },
+  { id: 'tacos-don-juan', cat: 'restaurante', sub: 'tacos', name: 'Tacos Don Juan', area: 'Condesa', price: 10, priceNote: 'tacos $2-3 c/u', desc: 'Pastor de los mejores. Café Tacvba viene aquí. Local de barrio.', tip: 'Llegar antes de las 9 PM o se acaba la carne.' },
+  { id: 'parnita', cat: 'restaurante', sub: 'tacos', name: 'El Parnita', area: 'Roma', price: 25, priceNote: 'plato fuerte $12-20', desc: 'Cazuelitas mexicanas, ambiente joven, micheladas. Casual mexicano cool.', tip: 'Bueno para grupos. Vibra muy "CDMX millennial".' },
+  { id: 'limantour', cat: 'bar', sub: 'cocktail', name: 'Licorería Limantour', area: 'Roma', price: 20, priceNote: 'coctel ~$15-20', desc: 'Top World\'s 50 Best Bars. El bar más famoso de México. Coctelería mexicana de autor.', tip: 'Llegar 7-8 PM para evitar fila. Pedir Margarita Al Pastor.', star: true },
+  { id: 'handshake', cat: 'bar', sub: 'cocktail', name: 'Handshake Speakeasy', area: 'Juárez', price: 22, priceNote: 'coctel ~$18-22', desc: 'Speakeasy. Llegó al #1 World\'s 50 Best Bars 2024. Coctelería precisa, alquímica.', tip: 'Reservar con anticipación. Entrada discreta.', star: true, reserva: true },
+  { id: 'hanky-panky', cat: 'bar', sub: 'cocktail', name: 'Hanky Panky', area: 'Juárez', price: 20, priceNote: 'coctel ~$15-20', desc: 'Speakeasy clásico. Top World\'s Best Bars. Entrada por taquería secreta.', tip: 'Solo entran si tienes reservación. Cocteles tipo vintage.', reserva: true },
+  { id: 'tlecan', cat: 'bar', sub: 'cocktail', name: 'Tlecan', area: 'Roma', price: 18, priceNote: 'coctel ~$12-18', desc: 'Mezcal cocktails educativos. Ingredientes prehispánicos. Inspirado en los aztecas.', tip: 'Experiencia más que bar. Pregunten al bartender.', star: true },
+  { id: 'baltra', cat: 'bar', sub: 'cocktail', name: 'Baltra Bar', area: 'Condesa', price: 18, priceNote: 'coctel ~$12-18', desc: 'Coctelería inspirada en climas y geografía. Top World\'s Best Bars.', tip: 'Bar pequeño, vale llegar temprano.' },
+  { id: 'maison-artemisia', cat: 'bar', sub: 'cocktail', name: 'Maison Artemisia', area: 'Roma', price: 18, priceNote: 'coctel ~$12-18', desc: 'Bar de absenta y vermut. Ambiente parisino siglo XIX.', tip: 'Romántico, oscuro, perfecto para pareja.' },
+  { id: 'departamento', cat: 'bar', sub: 'cocktail', name: 'Departamento', area: 'Juárez', price: 15, priceNote: 'coctel ~$10-15', desc: 'Bar-departamento. Vibra apartament-party, terraza, DJ.', tip: 'Más fiestero. Ideal viernes/sábado.' },
+  { id: 'salon-rosetta', cat: 'bar', sub: 'cocktail', name: 'Salón Rosetta', area: 'Roma', price: 18, priceNote: 'coctel ~$12-18', desc: 'Encima de Rosetta. Cocteles excelentes, ambiente íntimo art déco.', tip: 'Bajan a cenar a Rosetta o solo bar.', star: true },
+  { id: 'brujas', cat: 'bar', sub: 'cocktail', name: 'Brujas', area: 'Roma', price: 15, priceNote: 'coctel ~$10-15', desc: 'Bar liderado por mujeres, vibra alternativa. Cocteles creativos.', tip: 'Ambiente diverso e inclusivo, queer-friendly.' },
+  { id: 'clandestina', cat: 'bar', sub: 'mezcaleria', name: 'La Clandestina', area: 'Condesa', price: 12, priceNote: 'shot $8-15', desc: 'Mezcalería pura. Más de 100 mezcales artesanales de productores pequeños.', tip: 'Pidan al bartender que les arme un flight de degustación.', star: true },
+  { id: 'pare-sufrir', cat: 'bar', sub: 'mezcaleria', name: 'Pare de Sufrir', area: 'Roma', price: 12, priceNote: 'shot $8-12', desc: 'Mezcalería con ambiente cantina-moderna. Curaduría seria de mezcales.', tip: 'Buenas botanas también.' },
+  { id: 'bosforo', cat: 'bar', sub: 'mezcaleria', name: 'Bósforo', area: 'Centro', price: 12, priceNote: 'shot $8-15', desc: 'Mezcalería pionera. Mezcales artesanales raros, ambiente bohemio.', tip: 'Cerca del Eje Central. De los más serios para mezcal.' },
+  { id: 'casa-franca', cat: 'bar', sub: 'mezcaleria', name: 'Casa Franca', area: 'Roma', price: 18, priceNote: 'coctel ~$12-18', desc: 'Jazz en vivo + mezcal/coctelería. Ambiente sofisticado.', tip: 'Romántico para una noche tipo "jazz club".' },
+  { id: 'la-opera', cat: 'bar', sub: 'cantina', name: 'La Ópera Bar', area: 'Centro', price: 15, priceNote: 'cerveza/coctel $5-12', desc: 'Cantina histórica de 1895. Tiene una bala en el techo (supuestamente de Pancho Villa).', tip: 'Experiencia más que bar nuevo. Pidan botanas de cortesía.', star: true },
+  { id: 'tenampa', cat: 'bar', sub: 'cantina', name: 'Salón Tenampa', area: 'Garibaldi', price: 15, priceNote: 'tequila/cerveza $5-10', desc: 'Cantina con mariachis 24/7 en Plaza Garibaldi. Tequila y serenata.', tip: 'Solo si quieren la experiencia mariachi al 100%. Algo turística.' },
+  { id: 'mancera', cat: 'bar', sub: 'cantina', name: 'Bar Mancera', area: 'Centro', price: 12, priceNote: 'cerveza/coctel $5-10', desc: 'Cantina elegante desde 1920s. Diseño art déco, ambiente caballeros.', tip: 'Solo abren de día (lunch hour cantina). Cerca de Bellas Artes.' },
+  { id: 'la-no-20', cat: 'bar', sub: 'cantina', name: 'La No. 20', area: 'Condesa / Polanco', price: 18, priceNote: 'coctel/comida $10-25', desc: 'Cantina moderna gastronómica. Comida + cocteles. Vibra cantina elegante.', tip: 'Buena opción si quieren cantina vibe sin lo turístico.' },
+  { id: 'cha-cha-cha', cat: 'bar', sub: 'rooftop', name: 'Terraza Cha Cha Chá', area: 'Centro', price: 15, priceNote: 'coctel $10-15', desc: 'Rooftop frente a Bellas Artes. Vista espectacular al Palacio.', tip: 'Atardecer es la mejor hora. Foto obligatoria.', star: true },
+  { id: 'balcon-zocalo', cat: 'bar', sub: 'rooftop', name: 'Balcón del Zócalo', area: 'Centro', price: 18, priceNote: 'coctel $12-18', desc: 'Rooftop con vista al Zócalo y Catedral. Encima de Hotel Zócalo.', tip: 'Vista única. Reservar para hora del atardecer.' },
+  { id: 'supra', cat: 'bar', sub: 'rooftop', name: 'Supra Roma', area: 'Roma', price: 15, priceNote: 'coctel $10-15', desc: 'Rooftop relajado en Roma. Vista a la Condesa.', tip: 'Buena vibra para grupos. DJ los fines de semana.' },
+  { id: 'patrick-miller', cat: 'bar', sub: 'club', name: 'Patrick Miller', area: 'Doctores', price: 10, priceNote: 'cover $5-10', desc: 'Club legendario de música disco/freestyle/high energy. Solo viernes.', tip: 'Experiencia 100% mexicana. Bailar es obligatorio. Solo viernes.', star: true },
+  { id: 'mama-rumba', cat: 'bar', sub: 'club', name: 'Mama Rumba', area: 'Roma', price: 12, priceNote: 'cover $5-12', desc: 'Bar/club de salsa con banda en vivo. Caliente, bailable.', tip: 'Saber bailar ayuda pero te enseñan. Vibra latina pura.' },
+  { id: 'salon-los-angeles', cat: 'bar', sub: 'club', name: 'Salón Los Ángeles', area: 'Guerrero', price: 8, priceNote: 'cover $5-8', desc: 'Salón de baile histórico (1937). Danzón, son, mambo. Para mayores de 30.', tip: 'Domingos baile tradicional. Tomar Uber, no andar a pie por la zona.' },
+  { id: 'mutem', cat: 'tour', sub: 'mezcal', name: 'Museo del Tequila y Mezcal (MUTEM)', area: 'Garibaldi', price: 12, priceNote: 'entrada + tasting', desc: 'Museo dedicado a las dos bebidas nacionales. Incluye degustación.', tip: 'Buena intro educativa antes de salir a mezcalerías.' },
+  { id: 'mezcal-tour', cat: 'tour', sub: 'mezcal', name: 'Tour de mezcal por mezcalerías', area: 'Roma/Condesa', price: 70, priceNote: 'por persona, 3-4h', desc: 'Tour guiado por 3-4 mezcalerías top con sommelier de mezcal. Botanas incluidas.', tip: 'Buscar en Airbnb Experiences "mezcal tour".', star: true },
+  { id: 'food-tour-roma', cat: 'tour', sub: 'food', name: 'Tour gastronómico Roma/Condesa', area: 'Roma/Condesa', price: 90, priceNote: 'por persona, 4h', desc: 'Tour caminando con 6-8 paradas: tacos, mezcal, postres, mercado.', tip: 'Excelente intro a la comida CDMX. Eat Mexico es la empresa más recomendada.' },
+  { id: 'cooking-class', cat: 'tour', sub: 'food', name: 'Clase de cocina mexicana', area: 'Múltiples', price: 130, priceNote: 'por persona, 5h', desc: 'Tour a mercado + clase para hacer mole/salsas/tortillas. Comen lo que cocinan.', tip: 'Casa Jacaranda es la más recomendada. Reservar online.', star: true },
+  { id: 'pulqueria', cat: 'tour', sub: 'mezcal', name: 'Pulquería La Hija de los Apaches', area: 'Roma Sur', price: 10, priceNote: 'curado $3-5', desc: 'Experiencia pulque (bebida prehispánica de maguey). Pulques curados de frutas.', tip: 'No es un tour formal pero es una experiencia cultural. Cuidado, embriaga rápido.' },
+  { id: 'tour-murales', cat: 'tour', sub: 'walking', name: 'Tour de murales de Diego Rivera', area: 'Centro', price: 50, priceNote: 'por persona, 3h', desc: 'Recorrido guiado: Palacio Nacional + SEP + Bellas Artes + San Ildefonso.', tip: 'Diego pintó más murales en CDMX que en cualquier otra ciudad.' },
+  { id: 'tour-coyoacan', cat: 'tour', sub: 'walking', name: 'Walking tour de Coyoacán', area: 'Coyoacán', price: 40, priceNote: 'por persona, 2-3h', desc: 'Recorrido por casa de Frida, Trotsky, plazas, mercado.', tip: 'Buena opción si van un día completo a Coyoacán.' },
+];
+
+const CATEGORIES = [
+  { id: 'all', label: 'Todo', icon: 'sparkles' },
+  { id: 'actividad', label: 'Actividades', icon: 'compass' },
+  { id: 'restaurante', label: 'Restaurantes', icon: 'utensils' },
+  { id: 'bar', label: 'Bares', icon: 'wine' },
+  { id: 'tour', label: 'Tours', icon: 'mountain' },
+];
+
+const SUBCATEGORIES = {
+  actividad: [
+    { id: 'museo', label: 'Museos' },
+    { id: 'experiencia', label: 'Experiencias' },
+    { id: 'daytrip', label: 'Day Trips' },
+    { id: 'mercado', label: 'Mercados' },
+    { id: 'barrio', label: 'Parques/Barrios' },
+  ],
+  restaurante: [
+    { id: 'finedining', label: 'Fine Dining' },
+    { id: 'contemporaneo', label: 'Contemporáneo' },
+    { id: 'tradicional', label: 'Tradicional' },
+    { id: 'brunch', label: 'Brunch' },
+    { id: 'tacos', label: 'Tacos & Casual' },
+  ],
+  bar: [
+    { id: 'cocktail', label: 'Coctelerías' },
+    { id: 'mezcaleria', label: 'Mezcalerías' },
+    { id: 'cantina', label: 'Cantinas' },
+    { id: 'rooftop', label: 'Rooftops' },
+    { id: 'club', label: 'Bailar' },
+  ],
+  tour: [
+    { id: 'mezcal', label: 'Tequila/Mezcal' },
+    { id: 'food', label: 'Gastronómicos' },
+    { id: 'walking', label: 'Caminata' },
+  ],
+};
+
+const CAT_LABELS = { actividad: 'Actividad', restaurante: 'Restaurante', bar: 'Bar', tour: 'Tour' };
+
+const ICONS = {
+  sparkles: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z"/></svg>',
+  compass: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>',
+  utensils: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/></svg>',
+  wine: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 22h8"/><path d="M7 10h10"/><path d="M12 15v7"/><path d="M12 15a5 5 0 0 0 5-5V3H7v7a5 5 0 0 0 5 5Z"/></svg>',
+  mountain: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m8 3 4 8 5-5 5 15H2L8 3z"/></svg>',
+  heart: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.29 1.51 4.04 3 5.5l7 7Z"/></svg>',
+  pin: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>',
+  star: '<svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>',
+  chevronDown: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>',
+  chevronUp: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>',
+  dollar: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="2" x2="12" y2="22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>',
+  x: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>',
+  alert: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>',
+};
+
+function icon(name, size = 12) {
+  return '<span class="icon" style="width:' + size + 'px;height:' + size + 'px;display:inline-block;line-height:0">' + ICONS[name] + '</span>';
+}
+
+// ============ STATE ============
+let state = {
+  favorites: {},
+  expanded: {},
+  activeCat: 'all',
+  activeSub: 'all',
+  showFavOnly: false,
+  search: '',
+};
+
+// Load from localStorage
+try {
+  const saved = localStorage.getItem('cdmx-favs');
+  if (saved) state.favorites = JSON.parse(saved);
+} catch (e) {}
+
+function saveFavs() {
+  try { localStorage.setItem('cdmx-favs', JSON.stringify(state.favorites)); } catch (e) {}
+}
+
+// ============ RENDER ============
+function renderPills() {
+  const container = document.getElementById('catPills');
+  const favByCat = { actividad: 0, restaurante: 0, bar: 0, tour: 0 };
+  ITEMS.forEach(i => { if (state.favorites[i.id]) favByCat[i.cat]++; });
+
+  container.innerHTML = CATEGORIES.map(c => {
+    const active = state.activeCat === c.id;
+    const color = c.id === 'actividad' ? '#C2553D' : c.id === 'restaurante' ? '#1B5E63' : c.id === 'bar' ? '#8B5CF6' : c.id === 'tour' ? '#D4A04C' : '#666';
+    const bgStyle = active ? 'background:' + color : '';
+    const count = c.id !== 'all' && favByCat[c.id] > 0 ? '<span class="count">' + favByCat[c.id] + '</span>' : '';
+    return '<button class="pill ' + (active ? 'active' : '') + '" data-cat="' + c.id + '" style="' + bgStyle + '">' + icon(c.icon, 11) + '<span>' + c.label + '</span>' + count + '</button>';
+  }).join('');
+
+  container.querySelectorAll('button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      state.activeCat = btn.dataset.cat;
+      state.activeSub = 'all';
+      render();
+    });
+  });
+
+  // Sub-pills
+  const subWrap = document.getElementById('subPillsWrap');
+  if (state.activeCat !== 'all' && SUBCATEGORIES[state.activeCat]) {
+    subWrap.style.display = 'block';
+    const subs = SUBCATEGORIES[state.activeCat];
+    const subContainer = document.getElementById('subPills');
+    subContainer.innerHTML = '<button class="sub-pill ' + (state.activeSub === 'all' ? 'active' : '') + '" data-sub="all">Todos</button>' +
+      subs.map(s => '<button class="sub-pill ' + (state.activeSub === s.id ? 'active' : '') + '" data-sub="' + s.id + '">' + s.label + '</button>').join('');
+    subContainer.querySelectorAll('button').forEach(btn => {
+      btn.addEventListener('click', () => {
+        state.activeSub = btn.dataset.sub;
+        render();
+      });
+    });
+  } else {
+    subWrap.style.display = 'none';
+  }
+}
+
+function renderCards() {
+  const container = document.getElementById('cardsContainer');
+  const empty = document.getElementById('emptyState');
+
+  const filtered = ITEMS.filter(item => {
+    if (state.showFavOnly && !state.favorites[item.id]) return false;
+    if (state.activeCat !== 'all' && item.cat !== state.activeCat) return false;
+    if (state.activeSub !== 'all' && item.sub !== state.activeSub) return false;
+    if (state.search) {
+      const q = state.search.toLowerCase();
+      if (!item.name.toLowerCase().includes(q) && !item.area.toLowerCase().includes(q)) return false;
+    }
+    return true;
+  });
+
+  document.getElementById('countShowing').textContent = filtered.length;
+
+  if (filtered.length === 0) {
+    container.innerHTML = '';
+    empty.style.display = 'block';
+    empty.textContent = state.showFavOnly ? 'Aún no tienes favoritos en esta categoría' : 'No hay resultados con esos filtros';
+  } else {
+    empty.style.display = 'none';
+    container.innerHTML = filtered.map(item => {
+      const isFav = state.favorites[item.id];
+      const isExp = state.expanded[item.id];
+      const catClass = 'cat-' + item.cat;
+      const starHtml = item.star ? '<span class="star-icon" style="width:11px;height:11px;display:inline-block">' + ICONS.star + '</span>' : '';
+      const price = item.price === 0 ? 'GRATIS' : '$' + item.price + ' CAD';
+      
+      let details = '';
+      if (isExp) {
+        details = '<div class="details">';
+        if (item.priceNote) details += '<div class="price-note">' + icon('dollar', 9) + '<span>' + item.priceNote + '</span></div>';
+        if (item.cerrado) details += '<div class="closed-note">' + icon('x', 9) + '<span>Cerrado: ' + item.cerrado + '</span></div>';
+        if (item.tip) details += '<div class="tip"><span class="tip-icon" style="width:10px;height:10px">' + ICONS.sparkles + '</span><span>' + item.tip + '</span></div>';
+        if (item.reserva) details += '<div class="reserva-badge">' + icon('alert', 9) + '<span>NECESITA RESERVACIÓN</span></div>';
+        details += '</div>';
+      }
+
+      return '<div class="card ' + catClass + ' ' + (isFav ? 'fav' : '') + '">' +
+        '<div class="card-inner">' +
+          '<button class="heart-btn ' + (isFav ? 'fav' : '') + '" data-id="' + item.id + '" data-action="fav">' + icon('heart', 16) + '</button>' +
+          '<div class="card-content" data-id="' + item.id + '" data-action="expand">' +
+            '<div class="card-title">' + escapeHtml(item.name) + starHtml + '</div>' +
+            '<div class="meta-row">' +
+              '<span class="cat-tag ' + catClass + '">' + CAT_LABELS[item.cat] + '</span>' +
+              '<span class="area-tag">' + icon('pin', 9) + escapeHtml(item.area) + '</span>' +
+              '<span class="price-tag">' + price + '</span>' +
+            '</div>' +
+            '<div class="desc ' + (isExp ? 'expanded' : '') + '">' + escapeHtml(item.desc) + '</div>' +
+            details +
+          '</div>' +
+          '<button class="chevron-btn" data-id="' + item.id + '" data-action="expand">' + icon(isExp ? 'chevronUp' : 'chevronDown', 16) + '</button>' +
+        '</div>' +
+      '</div>';
+    }).join('');
+
+    // Attach handlers
+    container.querySelectorAll('[data-action="fav"]').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const id = btn.dataset.id;
+        state.favorites[id] = !state.favorites[id];
+        if (!state.favorites[id]) delete state.favorites[id];
+        btn.classList.add('pop');
+        saveFavs();
+        setTimeout(render, 30);
+      });
+    });
+    container.querySelectorAll('[data-action="expand"]').forEach(el => {
+      el.addEventListener('click', () => {
+        const id = el.dataset.id;
+        state.expanded[id] = !state.expanded[id];
+        render();
+      });
+    });
+  }
+}
+
+function escapeHtml(str) {
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
+function render() {
+  renderPills();
+  renderCards();
+
+  const favCount = Object.values(state.favorites).filter(Boolean).length;
+  document.getElementById('countFav').textContent = favCount;
+  document.getElementById('footerCount').textContent = favCount;
+
+  const favToggle = document.getElementById('favToggle');
+  if (state.showFavOnly) favToggle.classList.add('active'); else favToggle.classList.remove('active');
+
+  const resetBtn = document.getElementById('resetBtn');
+  resetBtn.style.display = favCount > 0 ? 'inline-flex' : 'none';
+
+  const footerMsg = document.getElementById('footerMsg');
+  footerMsg.style.display = (favCount > 0 && !state.showFavOnly) ? 'block' : 'none';
+
+  const fab = document.getElementById('fabBtn');
+  document.getElementById('fabText').textContent = state.showFavOnly ? 'Ver todos' : 'Ver mis ' + favCount + ' favoritos';
+  if (favCount > 0) fab.classList.add('show'); else fab.classList.remove('show');
+}
+
+// ============ EVENT LISTENERS ============
+document.getElementById('searchInput').addEventListener('input', (e) => {
+  state.search = e.target.value;
+  renderCards();
+});
+
+document.getElementById('favToggle').addEventListener('click', () => {
+  state.showFavOnly = !state.showFavOnly;
+  render();
+});
+
+document.getElementById('fabBtn').addEventListener('click', () => {
+  state.showFavOnly = !state.showFavOnly;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  render();
+});
+
+document.getElementById('resetBtn').addEventListener('click', () => {
+  if (confirm('¿Quitar todos los favoritos?')) {
+    state.favorites = {};
+    saveFavs();
+    render();
+  }
+});
+
+// Initial render
+render();
+</script>
+
+</body>
+</html>
